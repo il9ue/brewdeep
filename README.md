@@ -9,15 +9,15 @@ BrewDeep has been developed to support the management and monitoring of cloud di
 #### Basic Scenarios 
 
 * System Metrics Evaluations
---* Basic Disk in/out metrics check
---* Basic Disk Throughput check
+..* Basic Disk in/out metrics check
+..* Basic Disk Throughput check
 * Servers Metrics 
---* Server Fail-over Rate
---* Server Group Transmission Rate : see how servers are reallocated by such conditions geometrical, high requests rates, low response rates, and etc.
+..* Server Fail-over Rate
+..* Server Group Transmission Rate : see how servers are reallocated by such conditions geometrical, high requests rates, low response rates, and etc.
 * Profile Metrics
---* Map related server group
---* Evaluate efficiency among servers inside group
---* Simulate relation metrics and suggest/report more efficient server communications
+..* Map related server group
+..* Evaluate efficiency among servers inside group
+..* Simulate relation metrics and suggest/report more efficient server communications
 
 
 #### Basic Features 
