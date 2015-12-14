@@ -14,7 +14,21 @@ import (
 // 	1. compare address and actual interface list
 //		2. 
 
-func getAdapterList() (*syscall.IpAdapterInfo, error) {
+type connectionInfo struct {
+	id					uint64
+	remoteNode 		bool
+	conn 				unsafe.Pointer
+}
+
+func newConnInfo() *connectionInfo {
+	connInfo := &connectionInfo{
+		id:			0,
+		remoteNode: false
+	}
+	return connInfo
+}
+
+func (cInfo *connectionInfo) getAdapterList() (*syscall.IpAdapterInfo, error) {
 	bTmp := make([]byte, 1000)
 	length := uint32(len(bTmp))
 	adtr := (*syscall.IpAdapterInfo)(unsafe.Pointer(&bTmp[0]))
@@ -29,7 +43,7 @@ func getAdapterList() (*syscall.IpAdapterInfo, error) {
 	return adtr, nil
 }
 
-func getLocalAddresses() error {
+func (cInfo *connectionInfo) getLocalAddresses() error {
 	if ifs, err := net.Interfaces(); err != nil {
 		return err
 	}
