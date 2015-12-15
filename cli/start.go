@@ -12,7 +12,10 @@ import (
 
    "github.com/spf13/cobra"
    "github.com/il9ue/brewdeep/config"
+   "github.com/il9ue/brewdeep/server"
 )
+
+var engine = context.NewContext()
 
 var initCmd = &cobra.Command{
    Use:  "init --nodes=...",
@@ -40,7 +43,13 @@ func runInit(_ *cobra.Command, args []string) {
 // 1. load default user setting
 // 2. Load default node network setting
 func initNode(args []string) {
-
+   clusterID := uuid.NewUUID4().String()
+   if err := engine.initEngines(args, clusterID); err != nil {
+      return
+   }
+   if err := server.startBootstrap(clusterID); err != nil {
+      return
+   }
 }
 
 

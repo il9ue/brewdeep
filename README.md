@@ -8,20 +8,9 @@ BrewDeep has been developed to support the management and monitoring of cloud di
 ### Scenarios & Features
 #### Basic Scenarios 
 
-* Basic Disk in/out metrics check
-* Basic Disk Throughput check
-* Server Fail-over Rate
-* Server Group Transmission Rate : see how servers are reallocated by such conditions geometrical, high requests rates, low response rates, and etc.
-* Map related server group
-* Evaluate efficiency among servers inside group
-* Simulate relation metrics and suggest/report more efficient server communications
-
+* 
 
 #### Basic Features 
 
 * CLI Support, manages and monitors by one command line
-* UI Support to see usages and analytics more clearly with graphs
-* Network Performance Checks
-* Mobile App & Desktop Browser loading time checks
-* Product performance Recommendations via simulating cutting-edge algorithms & protocol stacks
-
+* Network Performance Checks among peers

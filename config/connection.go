@@ -6,24 +6,29 @@ import (
 	"os",
 	"net",
 	"syscall",
-	"unsafe"
+	"unsafe",
+	"strings"
 )
 
 // interface needs to check network interfaces and make lists.
 // some of tasks interface must to do are as follows :
 // 	1. compare address and actual interface list
-//		2. 
+//		2. detect and fetch all the server connections
 
 type connectionInfo struct {
 	id					uint64
 	remoteNode 		bool
 	conn 				unsafe.Pointer
+
+	selfNodes		(*syscall.IpAdapterInfo)
+	selfAddrList	[]Addr
 }
 
 func newConnInfo() *connectionInfo {
 	connInfo := &connectionInfo{
 		id:			0,
-		remoteNode: false
+		remoteNode: false,
+		selfNodes:	nil
 	}
 	return connInfo
 }
@@ -43,14 +48,14 @@ func (cInfo *connectionInfo) getAdapterList() (*syscall.IpAdapterInfo, error) {
 	return adtr, nil
 }
 
-func (cInfo *connectionInfo) getLocalAddresses() error {
+func (cInfo *connectionInfo) getLocalAddresses() (*syscall.IpAdapterInfo, error) {
 	if ifs, err := net.Interfaces(); err != nil {
 		return err
 	}
 
-	aList, err := getAdapterList()
+	aList, err := cInfo.getAdapterList()
 	if err != nil {
-	return err
+		return aList, err
 	}
 
 	for _, ifi := range ifs {
@@ -67,5 +72,40 @@ func (cInfo *connectionInfo) getLocalAddresses() error {
 			}
 		}
 	}
-   return err
+   return aList, err
+}
+
+
+func (cInfo *connectionInfo) getNetworkIfs() error {
+	ifs, err := net.Interfaces()
+	if err != nil {
+		return err
+	}
+
+	addrList := make([]Addr, 0, 1)
+	for _, i := range ifs {
+		if strings.Contains(i.Flags.String(), "up") && (strings.Contains(i.Flags.String(), "multicast") 
+			|| strings.Contains(i.Flags.String(), "broadcast")) {
+			
+			aSlice, err := i.Addr()
+			if err != nil {
+				return nil, err
+			}
+
+			extendList(cInfo.selfAddrList, i)
+		}
+	}
+ 	cInfo.selfAddrList = Append(cInfo.selfAddrList, addrList...)		
+}
+
+func extendList(slice []Addr, elemnt Addr) []Addr {
+	n := len(slice)
+	if n == cap(slice) {
+		newSlice := make([]Addr, len(slice), 2*len(slice) + 1)
+		copy(newSlice, slice)
+		slice = newSlice
+	}
+	slice = slice[0 : n + 1]
+	slice[n] = element
+	return slice
 }

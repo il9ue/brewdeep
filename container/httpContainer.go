@@ -8,7 +8,7 @@ import (
    "time"
 )
 
-type webReceiver struct {
+type httpContainer struct {
    types          string
    selfAddr       string
    remoteAddr     string
@@ -19,14 +19,14 @@ type webReceiver struct {
    identified     bool
 }
 
-func newWebReceiver() *webReceiver {
-   wr := &webReceiver {
+func newHttpContainer() *httpContainer {
+   hr := &httpContainer {
 
    }
-   return wr
+   return hr
 }
 
-func (wr *webReceiver) figureClientInfo(w http.ResponseWriter, r *http.Request) (webReceiver, error) {
+func (hr *httpContainer) figureClientInfo(w http.ResponseWriter, r *http.Request) (httpContainer, error) {
    ts, _ := ws.checkDupHost(remoteIP)
    if ts == nil {
       return nil, err
@@ -35,9 +35,9 @@ func (wr *webReceiver) figureClientInfo(w http.ResponseWriter, r *http.Request) 
    // need this line?
    //http.HandleFunc("/", getRealHost)
    realHost := getRealHost(w, r)
-   if realHost != wr.remoteAddr {
-      wr.remoteAddr = realHost
-      return wr, nil
+   if realHost != hr.remoteAddr {
+      hr.remoteAddr = realHost
+      return hr, nil
    }
    return nil, nil
 }
@@ -51,8 +51,8 @@ func getRealHost(w http.ResponseWriter, r *http.Request) string {
    return nil
 }
 
-func (wr *webReceiver) checkDupHost(remoteAddr string) (time, error) {
-   tmpHosts := wr.remoteHosts
+func (hr *httpContainer) checkDupHost(remoteAddr string) (time, error) {
+   tmpHosts := hr.remoteHosts
    for key, value := range tmpHosts {
       if remoteAddr == key {
          return value, nil

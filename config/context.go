@@ -11,7 +11,10 @@ import (
 const (
 	defaultAddr				= ":28734"
 	defaultBalanceMode 	= true
+
 )
+
+var conn = connection.newConnInfo()
 
 type Context struct {
 	Address string
@@ -37,4 +40,13 @@ func (ctx *Context) makeDefaults() {
 func (ctx *Context) InitNode(() error {
 	
 	return nil
+}
+
+func initEngines(addrs []string, cID string) bool, error {
+	elements := len(addrs) - 1
+	if elements < 1 {
+		return false, err
+	}
+
+
 }
