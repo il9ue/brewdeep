@@ -6,6 +6,7 @@ import (
    "strings"
    "time"
    "net"
+   "sync"
 )
 
 const (
@@ -22,7 +23,9 @@ type StatMetaInfo struct {
    engineCount    int
    engineID       string
    latestEngine   string
-   engineList     Addr[]
+
+   engineList     chan Addr[]
+   nodeList       chan Addr[]
 }
 
 var engine = statEngine.newStatEngine()
@@ -81,10 +84,22 @@ func (s *StatMetaInfo) selectHotEngine() (string, error) {
          memoTime = Min(diffTime, memoTime)
          if prevTime > memoTime {
             s.Swap(0, i)
+            break
          }
       }
    }
+   return s.engineList[0], nil
+}
 
+
+func (s *StatMetaInfo) mapNodes() <-chan Addr {
+   
+   // if stat Track nodes are more than just local one,
+   // start publish/subscribe model and map network nodes 
+   // with stat db engine engine
+   if len(s.nodeList) > 1 {
+      
+   }
 }
 
 func (s *StatMetaInfo) Swap(i, j int) {
@@ -101,6 +116,53 @@ func (s *StatMetaInfo) countEngines() (int, error) {
 // To consider it as fetchable, stat data has more than one attributes
 // that is updated from the very last stat data.
 // [i.e.] http://go-database-sql.org/overview.html
-func (ctx *Context) statDataAvailable() (bool, error) {
-
+func (s *StatMetaInfo) statDataAvailable() (bool, error) {
+   
 }
+
+
+// mergeStats do concurrency routine to compute updated node statistics value 
+func (s *StatMetaInfo) mergeStats(done <-chan struct{}, cs ...<-chan int) <-chan int {
+   var wg sync.WaitGroup
+   out := make(chan int)
+
+   // Start an output goroutine for each input channel in cs.  output
+   // copies values from c to out until c is closed or it receives a value
+   // from done, then output calls wg.Done.
+   output := func(c <-chan int) {
+      for m := range c {
+         select {
+         case out <- m:
+         case <-done:
+         }
+      }
+      wg.Done()
+   }
+   wr.Add(len(cs))
+
+   // Start a goroutine to close out once all the output goroutines are
+   // done.  This must start after the wg.Add call.
+   // fetch some stat value by call related functions
+   go func () {
+      wg.Wait()
+      close(out)
+   }()
+   return out
+}
+
+func (s *StatMetaInfo) generateEngine() error {
+   out := make(chan int)
+   go func() {
+      
+      close(out)
+   }()
+   return out
+}
+
+// scanEngines lookup active engine or/and nodes and fetch updated values if any..
+// return string value for engineID
+func (s* StatMetaInfo) scanEngines() (string, error) {
+   
+}
+
+
